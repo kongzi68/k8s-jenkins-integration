@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-api-devops
+  labels:
+    app: k8s-api-devops
+  namespace: ops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-api-devops
+  template:
+    metadata:
+      labels:
+        app: k8s-api-devops
+    spec:
+      containers:
+        - name: k8s-api
+          image: iamIPaddr:8765/bf-devops/bf-jenkins-api:viamIPaddr
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: harbor-inner
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: k8s-api-devops
+  name: k8s-api-devops-in-svc
+  namespace: ops
+spec:
+  ports:
+    - name: k8sapi
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: k8s-api-devops
+  type: ClusterIP
